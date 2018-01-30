@@ -1,10 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-
-const fetchPokemon = (id, callback) =>
-  fetch(`https://d1s1rehmg7ei44.cloudfront.net/api/v2/pokemon/${id}/`)
-    .then(res => res.json())
-    .then(callback);
+import fetchPokemon from "./fetchPokemon";
 
 class Pokemon extends React.Component {
   state = {
@@ -18,15 +14,15 @@ class Pokemon extends React.Component {
   }
 
   render() {
-    console.dir(this.state.character);
-    
     return this.state.character ? (
       <div>
         <h2>{this.state.character.name}</h2>
+
+        <h4>Abilities</h4>
         <ul>
-          {this.state.character.abilities.map((abilitie) => {
-            return <li key={abilitie.slot}>{abilitie.ability.name}</li>
-          })}
+          {this.state.character.abilities.map(ability => (
+            <li key={ability.slot}>{ability.ability.name}</li>
+          ))}
         </ul>
       </div>
     ) : (
