@@ -13,6 +13,12 @@ class Pokemon extends React.Component {
     );
   }
 
+  componentWillReceiveProps(nextProps) {
+    fetchPokemon(nextProps.id).then(character =>
+      this.setState({ character })
+    );
+  }
+
   render() {
     return this.state.character ? (
       <div>
@@ -31,7 +37,39 @@ class Pokemon extends React.Component {
   }
 }
 
+class PokemonPager extends React.Component {
+  state = {
+    id: 1
+  };
+
+  render() {
+    return (
+      <div>
+        <button
+          type="button"
+          onClick={() =>
+            this.setState(({ id }) => ({ id: id - 1 }))}
+        >
+          Previous
+        </button>
+
+        <button
+          type="button"
+          onClick={() =>
+          this.setState(({ id }) => ({ id: id + 1 }))}
+        >
+          Next
+        </button>
+
+        <h2>{this.state.id}</h2>
+
+        <Pokemon id={this.state.id} />
+      </div>
+    )
+  }
+}
+
 ReactDOM.render(
-  <Pokemon id={1} />,
+  <PokemonPager />,
   document.getElementById("root")
 );
