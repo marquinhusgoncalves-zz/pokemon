@@ -2,13 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import fetchPokemon from "./fetchPokemon";
 
-class Pokemon extends React.Component {
+class FetchPokemon extends React.Component {
   state = {
     character: null
   };
 
   componentDidMount() {
-    fetchPokemon(this.props.id, character =>
+    fetchPokemon(this.props.id).then(character =>
       this.setState({ character })
     );
   }
@@ -21,24 +21,29 @@ class Pokemon extends React.Component {
 
   render() {
     return this.state.character ? (
-      <div>
-        <h2>{this.state.character.name}</h2>
-
-        <h4>Abilities</h4>
-        <ul>
-          {this.state.character.abilities.map(ability => (
-            <li key={ability.slot}>{ability.ability.name}</li>
-          ))}
-        </ul>
-      </div>
+      <Pokemon character={this.state.character} />
     ) : (
-      <div>loading...</div>
-    );
+        <div>loading...</div>
+      );
   }
 }
 
-class IdPager extends React.Component {
+const Pokemon = props => (
+  <div>
+    <h2>{props.character.name}</h2>
 
+    <h4>Abilities</h4>
+    <ul>
+      {props.character.abilities.map(ability => (
+        <li key={ability.ability.name}>
+          {ability.ability.name}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+class IdPager extends React.Component {
   state = {
     id: 1
   };
@@ -57,20 +62,24 @@ class IdPager extends React.Component {
         <button
           type="button"
           onClick={() =>
-          this.setState(({ id }) => ({ id: id + 1 }))}
+            this.setState(({ id }) => ({ id: id + 1 }))}
         >
           Next
         </button>
 
-        <h2>{this.state.id}</h2>
-
-        <this.props.component id={this.state.id} />
+        {this.props.render(this.state.id)}
       </div>
-    )
+    );
   }
 }
 
 ReactDOM.render(
-  <IdPager component={Pokemon} />,
+  <IdPager
+    render={id => (
+      <FetchPokemon
+        id={id}
+      />
+    )}
+  />,
   document.getElementById("root")
 );
