@@ -37,7 +37,8 @@ class Pokemon extends React.Component {
   }
 }
 
-class PokemonPager extends React.Component {
+class IdPager extends React.Component {
+
   state = {
     id: 1
   };
@@ -63,13 +64,13 @@ class PokemonPager extends React.Component {
 
         <h2>{this.state.id}</h2>
 
-        <Pokemon id={this.state.id} />
+        <this.props.component id={this.state.id} />
       </div>
     )
   }
 }
 
 ReactDOM.render(
-  <PokemonPager />,
+  <IdPager component={Pokemon} />,
   document.getElementById("root")
 );
