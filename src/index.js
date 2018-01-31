@@ -4,6 +4,10 @@ import fetchPokemon from "./fetchPokemon";
 
 const withPokemon = Component =>
   class FetchPokemon extends React.Component {
+    static defaultProps = {
+      renderLoading: <div>loading...</div>
+    };
+
     state = {
       character: null
     };
@@ -24,7 +28,7 @@ const withPokemon = Component =>
       return this.state.character ? (
         <Component character={this.state.character} />
       ) : (
-          <div>loading...</div>
+          this.props.renderLoading
         );
     }
   };
@@ -77,7 +81,10 @@ class IdPager extends React.Component {
 ReactDOM.render(
   <IdPager
     render={id =>
-      React.createElement(withPokemon(Pokemon), { id: id })}
+      React.createElement(withPokemon(Pokemon), {
+        id: id,
+        renderLoading: <h4>LOADING</h4>
+      })}
   />,
   document.getElementById("root")
 );
