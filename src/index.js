@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import fetchPokemon from "./fetchPokemon";
+import cancelable from "./makeCancelable";
 
 const withPokemon = Component =>
   class FetchPokemon extends React.Component {
@@ -12,16 +13,26 @@ const withPokemon = Component =>
       character: null
     };
 
-    componentDidMount() {
-      fetchPokemon(this.props.id).then(character =>
+    fetchPokemon = id => {
+      this.pokemon = cancelable(
+        fetchPokemon(this.props.id)
+      );
+
+      this.pokemon.promise.then(character =>
         this.setState({ character })
       );
     }
 
+    componentDidMount() {
+      this.fetchPokemon(this.props.id)
+    }
+
     componentWillReceiveProps(nextProps) {
-      fetchPokemon(nextProps.id).then(character =>
-        this.setState({ character })
-      );
+      this.fetchPokemon(nextProps.id)
+    }
+
+    componentWillUnmount() {
+      this.pokemon.cancel()
     }
 
     render() {
@@ -84,10 +95,11 @@ ReactDOM.render(
           Next
         </button>
 
-        {React.createElement(withPokemon(Pokemon), {
-          id: id,
-          renderLoading: <h4>LOADING</h4>
-        })}
+        {React.createElement(withPokemon(Pokemon),
+          {
+            id: id,
+            renderLoading: <h4>LOADING</h4>
+          })}
       </div>
     )}
   />,
