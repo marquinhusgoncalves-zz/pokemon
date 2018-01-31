@@ -2,31 +2,32 @@ import React from "react";
 import ReactDOM from "react-dom";
 import fetchPokemon from "./fetchPokemon";
 
-class FetchPokemon extends React.Component {
-  state = {
-    character: null
-  };
+const withPokemon = Component =>
+  class FetchPokemon extends React.Component {
+    state = {
+      character: null
+    };
 
-  componentDidMount() {
-    fetchPokemon(this.props.id).then(character =>
-      this.setState({ character })
-    );
-  }
-
-  componentWillReceiveProps(nextProps) {
-    fetchPokemon(nextProps.id).then(character =>
-      this.setState({ character })
-    );
-  }
-
-  render() {
-    return this.state.character ? (
-      <Pokemon character={this.state.character} />
-    ) : (
-        <div>loading...</div>
+    componentDidMount() {
+      fetchPokemon(this.props.id).then(character =>
+        this.setState({ character })
       );
-  }
-}
+    }
+
+    componentWillReceiveProps(nextProps) {
+      fetchPokemon(nextProps.id).then(character =>
+        this.setState({ character })
+      );
+    }
+
+    render() {
+      return this.state.character ? (
+        <Component character={this.state.character} />
+      ) : (
+          <div>loading...</div>
+        );
+    }
+  };
 
 const Pokemon = props => (
   <div>
@@ -75,11 +76,8 @@ class IdPager extends React.Component {
 
 ReactDOM.render(
   <IdPager
-    render={id => (
-      <FetchPokemon
-        id={id}
-      />
-    )}
+    render={id =>
+      React.createElement(withPokemon(Pokemon), { id: id })}
   />,
   document.getElementById("root")
 );
