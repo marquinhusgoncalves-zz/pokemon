@@ -54,37 +54,42 @@ class IdPager extends React.Component {
   };
 
   render() {
-    return (
-      <div>
-        <button
-          type="button"
-          onClick={() =>
-            this.setState(({ id }) => ({ id: id - 1 }))}
-        >
-          Previous
-        </button>
-
-        <button
-          type="button"
-          onClick={() =>
-            this.setState(({ id }) => ({ id: id + 1 }))}
-        >
-          Next
-        </button>
-
-        {this.props.render(this.state.id)}
-      </div>
-    );
+    return this.props.render(this.state.id, {
+      increment: () =>
+        this.setState(({ id }) => ({ id: id + 1 })),
+      decrement: () =>
+        this.setState(({ id }) => ({ id: id - 1 }))
+    });
   }
 }
 
 ReactDOM.render(
   <IdPager
-    render={id =>
-      React.createElement(withPokemon(Pokemon), {
-        id: id,
-        renderLoading: <h4>LOADING</h4>
-      })}
+    render={(id, actions) => (
+      <div>
+        <button
+          className="btn"
+          type="button"
+          onClick={actions.decrement}
+        >
+          Previous
+        </button>
+
+        <button
+          className="btn"
+          style={{ marginLeft: ".5em" }}
+          type="button"
+          onClick={actions.increment}
+        >
+          Next
+        </button>
+
+        {React.createElement(withPokemon(Pokemon), {
+          id: id,
+          renderLoading: <h4>LOADING</h4>
+        })}
+      </div>
+    )}
   />,
   document.getElementById("root")
 );
